@@ -476,7 +476,7 @@ function IssueDetailContent() {
 
 export default function IssueDetailPage() {
   return (
-    <ProtectedRoute requiredPermissions={["issues.view"]}>
+    <ProtectedRoute requiredPermission={["issues.view"]}>
       <DashboardLayout>
         <IssueDetailContent />
       </DashboardLayout>

@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useAuth } from "@/hooks/use-auth"
 import { BarChart3, FileText, Users, MapPin, Bell, Settings, LogOut, Menu, X } from "lucide-react"
+import { LanguageSwitcher } from "../common/LanguageSwitcher"
 
 /**
  * BACKEND INTEGRATION NOTES:
@@ -110,6 +111,11 @@ export function TopNavigation() {
                 )
               })}
             </nav>
+
+            {/* Language Switcher */}
+            <div className="mr-4">
+              <LanguageSwitcher />
+            </div>
 
             {/* User Section */}
             <div className="flex items-center space-x-3 border-l border-white/20 pl-6">

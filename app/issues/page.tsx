@@ -107,7 +107,10 @@ function IssuesContent() {
           <h1 className="text-2xl font-bold text-slate-900">Issues Management</h1>
           <p className="text-slate-600 mt-1">Track and manage municipal issues reported by citizens</p>
         </div>
-        <Button className="bg-blue-600 hover:bg-blue-700">
+        <Button 
+          className="bg-blue-600 hover:bg-blue-700"
+          onClick={() => window.location.href = '/issues/new'}
+        >
           <Plus className="h-4 w-4 mr-2" />
           New Issue
         </Button>
