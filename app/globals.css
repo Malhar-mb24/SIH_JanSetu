@@ -74,6 +74,44 @@
   --sidebar-ring: oklch(0.439 0 0);
 }
 
+/* Google Translate Widget Styles */
+.goog-te-gadget {
+  color: transparent !important;
+}
+
+.goog-te-gadget-simple {
+  background-color: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+}
+
+.goog-te-menu-value span {
+  color: white !important;
+  text-decoration: none !important;
+}
+
+.goog-te-menu-value {
+  border: none !important;
+}
+
+/* Hide the Google Translate attribution */
+.goog-logo-link {
+  display: none !important;
+}
+
+.goog-te-gadget .goog-te-combo {
+  color: white;
+  background-color: transparent;
+  border: none;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+}
+
+.goog-te-gadget .goog-te-combo:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
 @theme inline {
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);

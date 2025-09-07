@@ -4,11 +4,11 @@ import { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
+import { CommonButton } from "@/components/ui/common-button"
 import { Badge } from "@/components/ui/badge"
 import { useAuth } from "@/hooks/use-auth"
 import { BarChart3, FileText, Users, MapPin, Bell, Settings, LogOut, Menu, X } from "lucide-react"
-import { LanguageSwitcher } from "../common/LanguageSwitcher"
+import { TranslationButton } from "@/components/common/translation-button"
 
 /**
  * BACKEND INTEGRATION NOTES:
@@ -97,24 +97,23 @@ export function TopNavigation() {
 
                 return (
                   <Link key={item.href} href={item.href}>
-                    <Button
+                    <CommonButton
                       variant={isActive ? "secondary" : "ghost"}
                       className={cn(
-                        "text-white hover:bg-white/10 hover:text-white",
-                        isActive && "bg-white/20 text-white font-semibold",
+                        isActive ? "bg-white/20 text-white font-semibold" : "text-white hover:bg-white/10"
                       )}
+                      icon={<Icon className="h-4 w-4" />}
                     >
-                      <Icon className="h-4 w-4 mr-2" />
                       {item.title}
-                    </Button>
+                    </CommonButton>
                   </Link>
                 )
               })}
             </nav>
 
-            {/* Language Switcher */}
-            <div className="mr-4">
-              <LanguageSwitcher />
+            {/* Translation Button */}
+            <div className="flex items-center">
+              <TranslationButton />
             </div>
 
             {/* User Section */}
@@ -132,29 +131,28 @@ export function TopNavigation() {
               </div>
 
               <div className="flex items-center space-x-1">
-                <Button variant="ghost" size="sm" className="text-white hover:bg-white/10">
+                <CommonButton variant="ghost" size="sm" className="text-white hover:bg-white/10">
                   <Bell className="h-4 w-4" />
-                </Button>
-                <Button variant="ghost" size="sm" className="text-white hover:bg-white/10">
+                </CommonButton>
+                <CommonButton variant="ghost" size="sm" className="text-white hover:bg-white/10">
                   <Settings className="h-4 w-4" />
-                </Button>
-                <Button variant="ghost" size="sm" onClick={logout} className="text-white hover:bg-white/10">
+                </CommonButton>
+                <CommonButton variant="ghost" size="sm" onClick={logout} className="text-white hover:bg-white/10">
                   <LogOut className="h-4 w-4" />
-                </Button>
+                </CommonButton>
               </div>
             </div>
           </div>
 
           {/* Mobile Menu Button */}
           <div className="md:hidden">
-            <Button
+            <CommonButton
               variant="ghost"
               size="sm"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="text-white hover:bg-white/10"
-            >
-              {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-            </Button>
+              icon={isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            />
           </div>
         </div>
 
@@ -168,16 +166,16 @@ export function TopNavigation() {
 
                 return (
                   <Link key={item.href} href={item.href} onClick={() => setIsMobileMenuOpen(false)}>
-                    <Button
+                    <CommonButton
                       variant={isActive ? "secondary" : "ghost"}
                       className={cn(
-                        "w-full justify-start text-white hover:bg-white/10",
-                        isActive && "bg-white/20 font-semibold",
+                        "w-full justify-start",
+                        isActive ? "bg-white/20 font-semibold" : "text-white hover:bg-white/10"
                       )}
+                      icon={<Icon className="h-4 w-4" />}
                     >
-                      <Icon className="h-4 w-4 mr-3" />
                       {item.title}
-                    </Button>
+                    </CommonButton>
                   </Link>
                 )
               })}
@@ -197,18 +195,15 @@ export function TopNavigation() {
                 </div>
               </div>
               <div className="flex space-x-2">
-                <Button variant="ghost" size="sm" className="flex-1 text-white hover:bg-white/10">
-                  <Bell className="h-4 w-4 mr-2" />
+                <CommonButton variant="ghost" size="sm" className="flex-1 text-white hover:bg-white/10" icon={<Bell className="h-4 w-4" />}>
                   Notifications
-                </Button>
-                <Button variant="ghost" size="sm" className="flex-1 text-white hover:bg-white/10">
-                  <Settings className="h-4 w-4 mr-2" />
+                </CommonButton>
+                <CommonButton variant="ghost" size="sm" className="flex-1 text-white hover:bg-white/10" icon={<Settings className="h-4 w-4" />}>
                   Settings
-                </Button>
-                <Button variant="ghost" size="sm" onClick={logout} className="flex-1 text-white hover:bg-white/10">
-                  <LogOut className="h-4 w-4 mr-2" />
+                </CommonButton>
+                <CommonButton variant="ghost" size="sm" onClick={logout} className="flex-1 text-white hover:bg-white/10" icon={<LogOut className="h-4 w-4" />}>
                   Logout
-                </Button>
+                </CommonButton>
               </div>
             </div>
           </div>
