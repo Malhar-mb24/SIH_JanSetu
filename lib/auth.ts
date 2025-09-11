@@ -14,7 +14,7 @@
  * - Add integration with Aadhaar authentication for citizen services
  */
 
-export type UserRole = "admin" | "manager" | "staff"
+export type UserRole = "super_admin" | "admin" | "manager" | "staff" | "commissioner"
 
 export interface User {
   id: string
@@ -38,16 +38,68 @@ export interface AuthState {
 const MOCK_USERS: User[] = [
   {
     id: "1",
-    email: "admin@jharkhandmc.gov.in",
-    name: "Municipal Administrator",
-    role: "admin",
+    email: "superadmin@jharkhandmc.gov.in",
+    name: "Super Administrator",
+    role: "super_admin",
     department: "Administration",
-    permissions: ["*"], // Full access
+    permissions: ["*"],
     lastLogin: new Date(),
     isActive: true,
   },
   {
     id: "2",
+    email: "admin@jharkhandmc.gov.in",
+    name: "Municipal Administrator",
+    role: "admin",
+    department: "Administration",
+    permissions: ["*"],
+    lastLogin: new Date(),
+    isActive: true,
+  },
+  {
+    id: "3",
+    email: "manager@jharkhandmc.gov.in",
+    name: "Department Manager",
+    role: "manager",
+    department: "Operations",
+    permissions: [
+      "view_issues", 
+      "manage_issues", 
+      "view_staff",
+      "dashboard.view",
+      "reports.view",
+      "staff.manage"
+    ],
+    lastLogin: new Date(),
+    isActive: true,
+  },
+  {
+    id: "4",
+    email: "staff@jharkhandmc.gov.in",
+    name: "Field Staff",
+    role: "staff",
+    department: "Field Operations",
+    permissions: [
+      "view_issues", 
+      "update_issues",
+      "view_profile",
+      "dashboard.view"
+    ],
+    lastLogin: new Date(),
+    isActive: true,
+  },
+  {
+    id: "5",
+    email: "commissioner@jharkhandmc.gov.in",
+    name: "Municipal Commissioner",
+    role: "commissioner",
+    department: "Commissioner Office",
+    permissions: ["view_analytics", "view_reports", "manage_issues"],
+    lastLogin: new Date(),
+    isActive: true,
+  },
+  {
+    id: "6",
     email: "manager@jharkhandmc.gov.in",
     name: "Department Manager",
     role: "manager",
@@ -123,8 +175,38 @@ export async function getCurrentUser(): Promise<User | null> {
  * - Cleanup any cached data
  */
 export async function logoutUser(): Promise<void> {
-  localStorage.removeItem("jharkhand_mc_user")
-  localStorage.removeItem("jharkhand_mc_token")
+  try {
+    // In a real implementation, this would make an API call to invalidate the session
+    console.log('Logging out user...');
+    
+    // Clear any client-side auth state
+    if (typeof window !== 'undefined') {
+      // Clear all auth-related items from localStorage
+      localStorage.removeItem('auth_token');
+      localStorage.removeItem('user');
+      
+      // Clear auth cookies
+      document.cookie = 'auth_token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+      document.cookie = 'session=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+      
+      // Clear session storage if used
+      sessionStorage.clear();
+      
+      // Clear any service worker caches
+      if ('caches' in window) {
+        const cacheNames = await caches.keys();
+        await Promise.all(cacheNames.map(name => caches.delete(name)));
+      }
+      
+      // Force a hard reload to ensure all state is cleared
+      window.location.href = '/login';
+    }
+  } catch (error) {
+    console.error('Error during logout:', error)
+    // Still try to redirect to login even if there was an error
+    window.location.href = '/login'
+    throw error // Re-throw to allow error handling in the calling function
+  }
 }
 
 /**
@@ -150,10 +232,12 @@ export function hasPermission(user: User | null, permission: string): boolean {
  * Get permissions for user role
  */
 export function getRolePermissions(role: UserRole): string[] {
-  const rolePermissions = {
+  const rolePermissions: Record<UserRole, string[]> = {
+    super_admin: ["*"],
     admin: ["*"],
-    manager: ["dashboard.view", "issues.manage", "community.moderate", "reports.view", "analytics.view"],
-    staff: ["dashboard.view", "issues.update", "community.view"],
+    manager: ["dashboard.view", "issues.manage", "community.moderate", "reports.view", "staff.view"],
+    staff: ["dashboard.view", "issues.view", "issues.update", "community.view"],
+    commissioner: ["dashboard.view", "analytics.view", "reports.view", "issues.view"]
   }
 
   return rolePermissions[role] || []

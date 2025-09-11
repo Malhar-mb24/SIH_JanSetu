@@ -1,11 +1,14 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { ProtectedRoute } from "@/components/auth/protected-route"
+import { useRouter } from "next/navigation"
+import { useAuth } from "@/hooks/use-auth"
 import { DashboardLayout } from "@/components/layout/dashboard-layout"
+import { ProtectedRoute } from "@/components/auth/protected-route"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { fetchKPIData, type KPIData } from "@/lib/mock-data"
-import { BarChart3, FileText, Users, AlertTriangle, CheckCircle, Clock } from "lucide-react"
+import { BarChart3, FileText, Users, AlertTriangle, CheckCircle, Clock, Loader2 } from "lucide-react"
+import { Button } from "@/components/ui/button"
 
 function DashboardContent() {
   const [kpiData, setKpiData] = useState<KPIData | null>(null)
@@ -86,8 +89,8 @@ function DashboardContent() {
             <Users className="h-4 w-4 text-blue-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-600">{kpiData?.activeStaff || 0}</div>
-            <p className="text-xs text-slate-500 mt-1">Currently online</p>
+            <div className="text-2xl font-bold text-blue-600">N/A</div>
+            <p className="text-xs text-slate-500 mt-1">Staff data not available</p>
           </CardContent>
         </Card>
       </div>
@@ -141,10 +144,7 @@ function DashboardContent() {
             </div>
             <div className="p-4 border border-dashed border-slate-300 rounded-lg text-center">
               <div className="h-8 w-8 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                <span className="text-green-600 font-semibold">AA</span>
               </div>
-              <h3 className="font-medium text-slate-900">Aadhaar Services</h3>
-              <p className="text-sm text-slate-600">Citizen authentication</p>
             </div>
             <div className="p-4 border border-dashed border-slate-300 rounded-lg text-center">
               <div className="h-8 w-8 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-2">
@@ -160,12 +160,53 @@ function DashboardContent() {
   )
 }
 
+// Define allowed roles for the dashboard
+const ALLOWED_ROLES = ['super_admin', 'admin', 'manager', 'commissioner'] as const;
+
 export default function DashboardPage() {
+  const { user, isLoading, hasRole, hasAnyRole } = useAuth();
+  const router = useRouter();
+
+  // Check if user has access based on role
+  const hasAccess = user && ALLOWED_ROLES.includes(user.role as any);
+
+  // Show loading state while checking auth
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  // Handle unauthorized access
+  if (!hasAccess) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <div className="max-w-md w-full space-y-4 text-center">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
+            <AlertTriangle className="h-6 w-6 text-red-600" />
+          </div>
+          <h2 className="text-2xl font-bold text-gray-900">Access Denied</h2>
+          <p className="text-gray-600">
+            You don't have permission to access the dashboard.
+          </p>
+          <Button 
+            onClick={() => router.push('/my-work')}
+            variant="outline"
+            className="mt-4"
+          >
+            Go to My Work
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Render the dashboard for authorized users
   return (
-    <ProtectedRoute requiredPermission="dashboard.view">
-      <DashboardLayout>
-        <DashboardContent />
-      </DashboardLayout>
-    </ProtectedRoute>
-  )
+    <DashboardLayout>
+      <DashboardContent />
+    </DashboardLayout>
+  );
 }

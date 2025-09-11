@@ -1,11 +1,12 @@
-import type React from "react"
 import type { Metadata } from "next"
 import { GeistSans } from "geist/font/sans"
 import { GeistMono } from "geist/font/mono"
 import { Analytics } from "@vercel/analytics/next"
 import { AuthProvider } from "@/hooks/use-auth"
 import { LanguageProvider } from "@/contexts/language-context"
+import { ULBProvider } from "@/contexts/ulb-context"
 import { Suspense } from "react"
+import { AppLayout } from "@/components/layout/app-layout"
 import "./globals.css"
 
 // Add CSS for country flags
@@ -47,15 +48,19 @@ export default function RootLayout({
       <head>
         <style dangerouslySetInnerHTML={{ __html: flagIconsCSS }} />
       </head>
-      <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
-        <Suspense fallback={<div>Loading...</div>}>
+      <body className={`${GeistSans.variable} ${GeistMono.variable} font-sans antialiased bg-gray-50`}>
+        <Suspense>
           <AuthProvider>
             <LanguageProvider>
-              {children}
+              <ULBProvider>
+                <AppLayout>
+                  {children}
+                </AppLayout>
+                <Analytics />
+              </ULBProvider>
             </LanguageProvider>
           </AuthProvider>
         </Suspense>
-        <Analytics />
       </body>
     </html>
   )

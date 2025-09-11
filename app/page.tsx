@@ -11,26 +11,35 @@ export default function HomePage() {
   const router = useRouter()
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (!isLoading && isAuthenticated) {
       router.push("/dashboard")
     }
-  }, [isAuthenticated, router])
+  }, [isAuthenticated, isLoading, router])
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin" />
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <Loader2 className="h-12 w-12 animate-spin text-blue-600" />
       </div>
     )
   }
 
-  if (isAuthenticated) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin" />
+  return (
+    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md">
+        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+          Welcome to Municipal Dashboard
+        </h2>
+        <p className="mt-2 text-center text-sm text-gray-600">
+          Please sign in to continue
+        </p>
       </div>
-    )
-  }
 
-  return <LoginForm />
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+          <LoginForm />
+        </div>
+      </div>
+    </div>
+  )
 }

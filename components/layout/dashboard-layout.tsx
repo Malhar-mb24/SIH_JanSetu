@@ -3,7 +3,6 @@
 import type React from "react"
 
 import { useAuth } from "@/hooks/use-auth"
-import { TopNavigation } from "./top-navigation"
 import { redirect } from "next/navigation"
 import ChatbotWidget from "@/components/chatbot/chatbot-widget"
 
@@ -41,7 +40,6 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <TopNavigation />
       <main className="max-w-7xl mx-auto px-4 py-6">{children}</main>
       <ChatbotWidget />
     </div>
